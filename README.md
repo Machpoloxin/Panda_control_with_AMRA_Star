@@ -34,7 +34,7 @@ This project is focused on controlling the **Franka Emika Panda** robotic arm us
    ```bash
    source install/setup.bash
 4. Run
-   ``bash
+   ```bash
    ros2 launch panda_controller panda_amra_control.launch.py 
 
 
