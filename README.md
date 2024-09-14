@@ -27,16 +27,18 @@ This project is focused on controlling the **Franka Emika Panda** robotic arm us
 
    ```bash
    git clone https://github.com/yourusername/Panda_control_with_AMRA_Star.git
-2. Build 
+2. Switch to version_0.0.1
+   ```bash
+   git checkout version_0.0.1 
+3. Build 
    ```bash
    colcon build
-3. Source
+4. Source
    ```bash
    source install/setup.bash
-4. Run
+5. Run
    ```bash
    ros2 launch panda_controller panda_amra_control.launch.py 
-
 
 ## To-Do List
 
