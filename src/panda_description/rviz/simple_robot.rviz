@@ -1,0 +1,28 @@
+Panel:
+  Name: Displays
+  Class: rviz_common/panels/Displays
+  Help: ''
+  Tree:
+    - Class: rviz_default_plugins/RobotModel
+      Expanded: true
+      Name: RobotModel
+      Properties:
+        Robot Description: robot_description_config
+        TF Prefix: ''
+        Visual Enabled: true
+        Collision Enabled: false
+        Update Interval: 0.01
+        Alpha: 1.0
+    - Class: rviz_default_plugins/Axes
+      Name: Axes
+    - Class: rviz_default_plugins/Grid
+      Name: Grid
+      Properties:
+        Plane Cell Count: 40
+        Normal Cell Count: 40
+        Color: 160; 160; 164
+        Alpha: 0.5
+        Line Style: Lines
+        Plane: XY
+        Offset: 0; 0; 0
+

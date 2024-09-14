@@ -1,0 +1,15 @@
+# MoveToPose.action
+
+# Goal
+geometry_msgs/Pose pose #current goal, final goal was stored when initialization
+
+---
+# Result
+geometry_msgs/Pose pose
+float32 pose_error  # pose error(between current goal) 
+
+
+---
+# Feedback
+geometry_msgs/Pose pose
+float32 progress #pose error
