@@ -38,7 +38,6 @@ This project is focused on controlling the **Franka Emika Panda** robotic arm us
    ros2 launch panda_controller panda_amra_control.launch.py 
 
 
-
 ## To-Do List
 
 Here is a list of tasks to complete the project:
