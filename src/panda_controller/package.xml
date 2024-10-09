@@ -17,6 +17,8 @@
   <depend>pinocchio</depend>
   <depend>amra_star</depend> <!-- amra_star package -->
   <depend>my_robot_msgs</depend> <!-- my_robot_msgs package -->
+  <depend>rviz_visual_tools</depend> 
+
 
 
   <test_depend>ament_lint_auto</test_depend>

@@ -15,6 +15,9 @@ def generate_launch_description():
         PathJoinSubstitution([FindExecutable(name='xacro')]), ' ', urdf_file
     ])}
 
+    obstacle_data_file = PathJoinSubstitution(
+        [FindPackageShare('amra_star'), 'maps', 'Testmap.map']
+    )
     # beigin robot_state_publisher Node
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
@@ -35,7 +38,7 @@ def generate_launch_description():
     # init and goal pose
     initial_position = [0.15, 0.1125, 0.0875]  # initial_position x, y, z
     initial_orientation = [0.707, 0.707, 0.0, 0.0]  # initial_orientation w, x, y, z
-    goal_position = [0.5, 0.125, 0.1]  # goal position x, y, z
+    goal_position = [0.6, 0.125, 0.1]  # goal position x, y, z
     goal_orientation = [0.707, 0.0, 0.707, 0.0]  # goal_orientation w, x, y, z
 
     # Begin client，add parameters
@@ -46,6 +49,8 @@ def generate_launch_description():
         output='screen',
         parameters=[
             {'scale_sensor_robot': 80.0},
+            {'panda_description': urdf_file},
+            {'map_file_path': obstacle_data_file},
             {'start_position': initial_position},
             {'start_orientation': initial_orientation},
             {'goal_position': goal_position},
@@ -55,8 +60,10 @@ def generate_launch_description():
 
     # initialize RViz2 (default.rviz)
     rviz_config_file = PathJoinSubstitution(
-        [FindPackageShare('panda_description'), 'rviz', 'default.rviz']
+        [FindPackageShare('panda_description'), 'rviz', 'with_obstacles.rviz']
     )
+
+
 
     rviz_node = Node(
         package='rviz2',
@@ -66,9 +73,31 @@ def generate_launch_description():
         arguments=['-d', rviz_config_file]
     )
 
+    obstacle_publisher_node = Node(
+        package='panda_controller',
+        executable='obstacle_publisher',
+        name='obstacle_publisher',
+        output='screen',
+        parameters=[
+            {'scale_sensor_robot': 80.0},
+            {'start_position':initial_position},
+            {'goal_position': goal_position},
+            {'file_path': obstacle_data_file}
+        ]
+    )
+
+    trajectory_publisher_node = Node(
+        package='panda_controller',  # Replace with your package name
+        executable='trajectory_publisher',
+        name='trajectory_publisher',
+        output='screen'
+    )
+
     return LaunchDescription([
         robot_state_publisher_node,
         action_server_node,
         action_client_node,
-        rviz_node
+        rviz_node,
+        obstacle_publisher_node,
+        trajectory_publisher_node
     ])

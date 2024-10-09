@@ -25,9 +25,12 @@ public:
     {
         RCLCPP_INFO(this->get_logger(),"Node started: move_to_pose_action_client");
         // Initialization
-
-        std::string urdf_file = ament_index_cpp::get_package_share_directory("panda_description") + "/urdf/panda.urdf";
-        std::string map_file = ament_index_cpp::get_package_share_directory("amra_star") + "/maps/Testmap.map";
+        this->declare_parameter<std::string>("panda_description", "");
+        std::string urdf_file= this->get_parameter("panda_description").as_string();
+        this->declare_parameter<std::string>("map_file_path", "");
+        std::string map_file = this->get_parameter("map_file_path").as_string();
+        //std::string urdf_file = ament_index_cpp::get_package_share_directory("panda_description") + "/urdf/panda.urdf";
+        //std::string map_file = ament_index_cpp::get_package_share_directory("amra_star") + "/maps/Testmap.map";
 
         pinocchio::Model model_;
         pinocchio::Data data_;

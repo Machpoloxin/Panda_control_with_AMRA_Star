@@ -17,6 +17,9 @@ find_package(pinocchio REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(amra_star REQUIRED) #amra_star
 find_package(my_robot_msgs REQUIRED)  
+find_package(rviz_visual_tools REQUIRED)
+find_package(tf2_eigen REQUIRED) 
+
 
 include_directories(${EIGEN3_INCLUDE_DIRS})
 
@@ -73,8 +76,10 @@ ament_target_dependencies(pose_subscriber rclcpp std_msgs geometry_msgs sensor_m
 
 add_executable(pose_actuator_server src/pose_actuator_server.cpp)
 add_executable(pose_actuator_client src/pose_actuator_client.cpp)
+add_executable(obstacle_publisher src/obstacle_publisher.cpp) # For obstacles
+add_executable(trajectory_publisher src/trajectory_publisher.cpp)#For trajectory
 ##
-add_executable(test_my_action src/test_my_action.cpp)
+#add_executable(test_my_action src/test_my_action.cpp)
 ##
 target_include_directories(pose_actuator_server 
 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -83,10 +88,28 @@ target_include_directories(pose_actuator_client
 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 ##
-target_include_directories(test_my_action 
-PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
+# target_include_directories(test_my_action 
+# PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+# )
 ##
+
+ament_target_dependencies(obstacle_publisher
+  rclcpp
+  rviz_visual_tools
+  geometry_msgs
+  tf2_eigen
+  Eigen3
+)
+
+ament_target_dependencies(trajectory_publisher
+  rclcpp
+  rviz_visual_tools
+  geometry_msgs
+  tf2_eigen
+  Eigen3
+)
+
+
 ament_target_dependencies(pose_actuator_server
   rclcpp
   rclcpp_action
@@ -108,21 +131,23 @@ ament_target_dependencies(pose_actuator_client
 )
 
 ##
-ament_target_dependencies(test_my_action
-  rclcpp
-  rclcpp_action
-  geometry_msgs
-  pinocchio  
-  my_robot_msgs
-  sensor_msgs
-  tf2_ros
-)
+# ament_target_dependencies(test_my_action
+#   rclcpp
+#   rclcpp_action
+#   geometry_msgs
+#   pinocchio  
+#   my_robot_msgs
+#   sensor_msgs
+#   tf2_ros
+# )
 ##
 target_link_libraries(pose_actuator_server  ${EIGEN3_LIBRARIES})
 target_link_libraries(pose_actuator_client  ${EIGEN3_LIBRARIES})
+target_link_libraries(obstacle_publisher ${EIGEN3_LIBRARIES})
+target_link_libraries(trajectory_publisher ${EIGEN3_LIBRARIES})
 
 ##
-target_link_libraries(test_my_action  ${EIGEN3_LIBRARIES})
+#target_link_libraries(test_my_action  ${EIGEN3_LIBRARIES})
 ##
 
 if(BUILD_TESTING)
@@ -156,7 +181,8 @@ install(TARGETS
 install(TARGETS
   pose_actuator_server
   pose_actuator_client
-  test_my_action ##
+  obstacle_publisher
+  trajectory_publisher
   DESTINATION lib/${PROJECT_NAME})
 
 ament_package()
