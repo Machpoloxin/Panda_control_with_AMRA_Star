@@ -73,6 +73,10 @@ private:
     double searchTime;
     double timeLimit; //ms
 
+    // Added position and orientation thresholds
+    double positionThreshold;
+    double orientationThreshold;
+
 
     void addNodeToExplored(const std::shared_ptr<Node>& node) {
         auto it = std::find_if(Explored.begin(), Explored.end(), 
@@ -132,8 +136,8 @@ private:
             for (const auto& node : openLists[index]) {
                 uniqueLevels.insert(node.res);
             }
-    }
-    return uniqueLevels;
+        }
+        return uniqueLevels;
     }   
 
     void addToCloseList(const std::shared_ptr<Node>& node, Resolution::Level res) {
@@ -215,6 +219,14 @@ public:
         const std::array<int, 3>& taskGoal, std::array<double, 4> goalOri,
         int resolutionScale, double timeLimit)
         : grid(path, resolutionScale), weight1(initWeight1), weight2(initWeight2), weight1_init(initWeight1), weight2_init(initWeight2), timeLimit(timeLimit) {
+        
+        // Initialize thresholds
+        positionThreshold = 2.0; // define appropriate value
+        orientationThreshold = 0.1; // define appropriate value
+
+        grid.addPath(taskStart,"start");
+        grid.addPath(taskGoal,"goal");
+        grid.addPath(50,50,50,"hold");
         
         manager.registerHeuristic("Euclidean", std::make_unique<EuclideanDistance>());
         heurs_map.emplace_back(Resolution::HIGH, manager.countHeuristics() - 1);
@@ -318,7 +330,12 @@ public:
         Resolution::Level res = heurs_map.at(heuristicIndex).first;
         std::vector<std::pair<std::array<int, 3>, std::string>> successors;
 
-        if (node->position == goal->position && node->orientation == goal->orientation)
+        // Modification: Changed the termination condition to use thresholds
+        const Heuristic* heuristic = manager.getHeuristicByIndex(0);
+        double positionDifference = heuristic->calculate(node->position, goal->position);
+        double orientationDifference = RotationQuaternion::distance(node->orientation, goal->orientation);
+
+        if (positionDifference < positionThreshold && orientationDifference < orientationThreshold)
             return;
 
         successors = grid.getSuccs(node->position, res);
@@ -406,7 +423,13 @@ public:
                 openLists[i].erase(openLists[i].begin());
 
                 std::cout << "x_now in "<<i<<": " << '(' << x->position[0] << ',' << x->position[1] << ',' << x->position[2] << ',' << x->f_cost << ')' << std::endl;
-                if (x->position == goal->position && x->orientation== goal->orientation) {
+
+                // Modification: Changed the termination condition to use thresholds
+                const Heuristic* heuristic = manager.getHeuristicByIndex(0);
+                double positionDifference = heuristic->calculate(x->position, goal->position);
+                double orientationDifference = RotationQuaternion::distance(x->orientation, goal->orientation);
+
+                if (positionDifference < positionThreshold && orientationDifference < orientationThreshold) {
                     std::cout << "beginToreconstruct" << std::endl;
                     reconstructPath(x);
                     checkImprove = true;
@@ -427,9 +450,26 @@ public:
 
 
 
+    // Modification: Adjusted reconstructPath to include goal node if necessary
     void reconstructPath(const std::shared_ptr<Node>& node) {
         solutionPath.clear();
-        for (std::shared_ptr<Node> current = node; current != nullptr; current = current->parent) {
+
+        std::shared_ptr<Node> current = node;
+
+        // Check if current node is close enough to goal
+        const Heuristic* heuristic = manager.getHeuristicByIndex(0);
+        double positionDifference = heuristic->calculate(current->position, goal->position);
+        double orientationDifference = RotationQuaternion::distance(current->orientation, goal->orientation);
+
+        if (positionDifference >= 1 || orientationDifference >= 0.1) {
+            // Current node is not the goal, add goal node
+            std::shared_ptr<Node> goalNode = std::make_shared<Node>(*goal);
+            goalNode->parent = current;
+            current = goalNode;
+        }
+
+        // Build the solution path
+        for (; current != nullptr; current = current->parent) {
             solutionPath.push_back(*current);
         }
         std::reverse(solutionPath.begin(), solutionPath.end());

@@ -17,7 +17,7 @@ int main(int argc, char **argv)
     std::array<int, 3> start = {12, 9, 7};
     std::array<int, 3> new_start = {12, 10, 8};
     std::array<double, 4> start_ori = {0.707, 0.707, 0, 0};
-    std::array<int, 3> goal = {40, 10, 8};
+    std::array<int, 3> goal = {40, 10, 35};
     std::array<double, 4> goal_ori = {0.707, 0, 0.707, 0};
 
     AMRA_Star::AMRAstar amraStar(10, 10, map_path, start, start_ori, goal, goal_ori, 1, 100);

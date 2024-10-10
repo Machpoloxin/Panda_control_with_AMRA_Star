@@ -324,6 +324,10 @@ public:
                     {
                         expandableNodes.emplace_back(neighbor,value);
                     }
+                    else if(!withinBounds)
+                    {
+                        std::cout<< "Out of the range of map!!!"<<std::endl;
+                    }
                 }
             }
         }
