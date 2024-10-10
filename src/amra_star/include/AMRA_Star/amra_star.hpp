@@ -330,7 +330,6 @@ public:
         Resolution::Level res = heurs_map.at(heuristicIndex).first;
         std::vector<std::pair<std::array<int, 3>, std::string>> successors;
 
-        // Modification: Changed the termination condition to use thresholds
         const Heuristic* heuristic = manager.getHeuristicByIndex(0);
         double positionDifference = heuristic->calculate(node->position, goal->position);
         double orientationDifference = RotationQuaternion::distance(node->orientation, goal->orientation);
@@ -448,9 +447,6 @@ public:
     }
     
 
-
-
-    // Modification: Adjusted reconstructPath to include goal node if necessary
     void reconstructPath(const std::shared_ptr<Node>& node) {
         solutionPath.clear();
 
