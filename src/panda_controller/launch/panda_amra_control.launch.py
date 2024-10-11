@@ -30,7 +30,7 @@ def generate_launch_description():
     # Beigin pose_actuator_server
     action_server_node = Node(
         package='panda_controller',  
-        executable='pose_actuator_server',  #check CMakeLists.txt
+        executable='pose_actuator_server', 
         name='pose_actuator_server',
         output='screen'
     )
@@ -87,7 +87,7 @@ def generate_launch_description():
     )
 
     trajectory_publisher_node = Node(
-        package='panda_controller',  # Replace with your package name
+        package='panda_controller',  
         executable='trajectory_publisher',
         name='trajectory_publisher',
         output='screen'
